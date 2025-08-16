@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='stylesheet' href='assets/css/style.css'>
+  <title>Admin Dashboard | NTcal Codes</title>
+</head>
+<body>
+  <header>
+    <div style='display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;'>
+      <img src='assets/images/logo.png' alt='NTcal Codes Logo' style='height:48px; margin-right:18px;'>
+      <h1 style='margin:0; font-size:2em;'>Admin Dashboard</h1>
+      <nav class='main-nav' style='margin-left:auto;'>
+        <a href='admin-dashboard.html'>Home</a>
+        <a href='admin-users.html'>Users</a>
+        <a href='admin-groupchat.html'>Group Chat</a>
+        <a href='admin-activity.html'>Activity Logs</a>
+        <a href='admin-settings.html'>Settings</a>
+        <a href='dashboard.html'>Logout</a>
+      </nav>
+    </div>
+  </header>
+  <div class='container'>
+    <div class='admin-sidebar'>
+      <h2>Admin Panel</h2>
+      <nav>
+        <a href='admin-dashboard.html'>Home</a>
+        <a href='admin-users.html'>Users</a>
+        <a href='admin-groupchat.html'>Group Chat</a>
+        <a href='admin-activity.html'>Activity Logs</a>
+        <a href='admin-settings.html'>Settings</a>
+        <a href='dashboard.html'>Logout</a>
+      </nav>
+    </div>
+    <div class='admin-content'>
+      <section class='admin-profile-section' style='margin-bottom:32px;'>
+        <div class='card' style='display:flex; align-items:center; gap:24px; background:#fff3e0;'>
+          <img src='assets/images/logo.png' alt='Admin Avatar' style='width:64px; height:64px; border-radius:50%; border:2px solid #6f42c1;'>
+          <div>
+            <h2 style='color:#6f42c1; margin-bottom:6px;'>Welcome, Admin</h2>
+            <p style='color:#fd7e14;'>Role: <strong>Super Admin</strong></p>
+          </div>
+        </div>
+      </section>
+      <section class='admin-stats-section' style='margin-bottom:32px;'>
+        <div style='display:flex; gap:32px; flex-wrap:wrap;'>
+          <div class='card' style='background:#e7f1ff; min-width:180px; text-align:center;'>
+            <h4 style='color:#6f42c1;'>Total Users</h4>
+            <p id='admin-total-users' style='font-size:2em; color:#fd7e14;'>0</p>
+          </div>
+          <div class='card' style='background:#fff3e0; min-width:180px; text-align:center;'>
+            <h4 style='color:#fd7e14;'>Group Messages</h4>
+            <p id='admin-total-messages' style='font-size:2em; color:#6f42c1;'>0</p>
+          </div>
+          <div class='card' style='background:#f8f9fa; min-width:180px; text-align:center;'>
+            <h4 style='color:#198754;'>Active Admins</h4>
+            <p id='admin-active-admins' style='font-size:2em; color:#0d6efd;'>1</p>
+          </div>
+        </div>
+      </section>
+      <section class='admin-activity-section' style='margin-bottom:32px;'>
+        <div class='card' style='background:#e7f1ff;'>
+          <h3 style='color:#6f42c1;'>Recent Activity</h3>
+          <div id='admin-activity-list' style='font-size:1em; color:#555;'></div>
+        </div>
+      </section>
+      <section style='margin-bottom:32px;'>
+        <h3 style='color:#fd7e14;'>All Registered Users</h3>
+        <div id='user-count' style='margin-bottom:12px; font-weight:600; color:#6f42c1;'></div>
+        <table style='width:100%; border-collapse:collapse;'>
+          <thead>
+            <tr style='background:#e7f1ff;'>
+              <th style='padding:8px; border:1px solid #ccc;'>Name</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Username</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Email</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Last Login</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Activities</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Actions</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Group Permission</th>
+            </tr>
+          </thead>
+          <tbody id='users-list'></tbody>
+        </table>
+      </section>
+      <section class='admin-chat-section' style='margin:40px 0;'>
+        <h2 style='color:#fd7e14; text-align:center;'>Admin Group Chat</h2>
+        <div class='groupchat-card' style='background:#fff3e0; border-radius:14px; box-shadow:0 2px 12px rgba(253,126,20,0.10); padding:28px; max-width:600px; margin:0 auto;'>
+          <div id='admin-chat-messages' style='height:220px; overflow-y:auto; background:#ece5dd; border-radius:8px; padding:16px; margin-bottom:18px;'></div>
+          <form id='admin-chat-form' style='display:flex; gap:10px;'>
+            <input type='text' id='admin-chat-input' placeholder='Type a message...' style='flex:1; padding:12px; border-radius:8px; border:1.5px solid #e7f1ff;'>
+            <button type='submit' class='btn' style='min-width:60px;'>Send</button>
+          </form>
+        </div>
+      </section>
+      <section class='admin-users-section' style='margin:40px 0;'>
+        <h2 style='color:#6f42c1; text-align:center;'>User Management</h2>
+        <div class='card' style='background:#e7f1ff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:28px; max-width:900px; margin:0 auto;'>
+          <table id='admin-users-table'>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id='admin-users-list'></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script src='assets/js/script.js'></script>
+  <script>
+    // Only allow admin access
+    document.addEventListener('DOMContentLoaded', function() {
+      var user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user || user.username !== 'codes') {
+        window.location.href = 'login.html';
+        return;
+      }
+      // Show all users
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      var usersList = document.getElementById('users-list');
+      var userCount = document.getElementById('user-count');
+      usersList.innerHTML = '';
+      userCount.textContent = 'Total Users: ' + users.length;
+      users.forEach(function(u, idx) {
+        var tr = document.createElement('tr');
+        var activities = [];
+        if (u.activity && Array.isArray(u.activity)) {
+          activities = u.activity;
+        }
+        tr.innerHTML = '<td style="padding:8px; border:1px solid #ccc;">' + (u.fullname || '') + '</td>' +
+                      '<td style="padding:8px; border:1px solid #ccc;">' + (u.username || '') + '</td>' +
+                      '<td style="padding:8px; border:1px solid #ccc;">' + (u.email || '') + '</td>' +
+                      '<td style="padding:8px; border:1px solid #ccc;">' + (u.lastLogin ? new Date(u.lastLogin).toLocaleString() : '-') + '</td>' +
+                      '<td style="padding:8px; border:1px solid #ccc; font-size:0.95em; color:#555;">' + (activities.length ? activities.join('<br>') : '-') + '</td>';
+        // Admin can delete users except self and reset password
+        if (u.username !== 'codes') {
+          tr.innerHTML += '<td style="padding:8px; border:1px solid #ccc;">' +
+            '<button class="btn" style="background:#fd7e14; color:white; padding:4px 10px; font-size:0.95em;" onclick="deleteUser(\'' + u.username + '\')">Delete</button>' +
+            '<button class="btn" style="background:#198754; color:white; padding:4px 10px; font-size:0.95em; margin-left:4px;" onclick="resetPassword(\'' + u.username + '\')">Reset Password</button>' +
+          '</td>';
+        } else {
+          tr.innerHTML += '<td style="padding:8px; border:1px solid #ccc;">-</td>';
+        }
+        // Group permission toggle
+        if (u.username !== 'codes') {
+          var checked = u.groupPermission === true ? 'checked' : '';
+          tr.innerHTML += '<td style="padding:8px; border:1px solid #ccc; text-align:center;">' +
+            '<input type="checkbox" class="group-perm-toggle" data-username="' + u.username + '" ' + checked + '> Allow group chat' +
+            '</td>';
+        } else {
+          tr.innerHTML += '<td style="padding:8px; border:1px solid #ccc; text-align:center;">Always allowed</td>';
+        }
+        usersList.appendChild(tr);
+      });
+      // Handle group permission toggle
+      setTimeout(function() {
+        var toggles = document.querySelectorAll('.group-perm-toggle');
+        toggles.forEach(function(toggle) {
+          toggle.onchange = function() {
+            var username = this.getAttribute('data-username');
+            var users = JSON.parse(localStorage.getItem('users')) || [];
+            var idx = users.findIndex(function(u) { return u.username === username; });
+            if (idx !== -1) {
+              users[idx].groupPermission = this.checked;
+              if (!users[idx].activity) users[idx].activity = [];
+              users[idx].activity.push('Group chat permission ' + (this.checked ? 'granted' : 'revoked') + ' by admin at ' + new Date().toLocaleString());
+              localStorage.setItem('users', JSON.stringify(users));
+            }
+          };
+        });
+      }, 100);
+    });
+    // Admin reset password function
+    function resetPassword(username) {
+      var newPass = prompt('Enter new password for ' + username + ':');
+      if (!newPass) return;
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      var idx = users.findIndex(function(u) { return u.username === username; });
+      if (idx !== -1) {
+        users[idx].password = newPass;
+        if (!users[idx].activity) users[idx].activity = [];
+        users[idx].activity.push('Password reset by admin at ' + new Date().toLocaleString());
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Password reset for ' + username);
+      }
+    }
+    // Admin delete user function
+    function deleteUser(username) {
+      if (!confirm('Are you sure you want to delete user ' + username + '?')) return;
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      users = users.filter(function(u) { return u.username !== username; });
+      localStorage.setItem('users', JSON.stringify(users));
+      // If deleted user is currently logged in, log them out
+      var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (currentUser && currentUser.username === username) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+        return;
+      }
+      // Refresh user list
+      location.reload();
+    }
+    // Admin dashboard group chat logic
+    function loadAdminChatMessages() {
+      var messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+      var chatBox = document.getElementById('admin-chat-messages');
+      if (!chatBox) return;
+      chatBox.innerHTML = '';
+      var user = JSON.parse(localStorage.getItem('currentUser'));
+      messages.forEach(function(msg) {
+        var div = document.createElement('div');
+        div.className = 'chat-message' + (user && user.username === msg.user ? ' self' : ' other');
+        div.style = 'margin-bottom:10px; padding:8px 14px; border-radius:12px; background:' + (user && user.username === msg.user ? '#dcf8c6' : '#fff') + ';';
+        div.innerHTML = '<span style="font-weight:600; color:#075e54;">' + msg.user + '</span> '
+          + '<span>' + msg.text + '</span> '
+          + '<span style="font-size:0.85em; color:#888; float:right;">' + new Date(msg.time).toLocaleTimeString() + '</span>';
+        chatBox.appendChild(div);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    document.getElementById('admin-chat-form').onsubmit = function(e) {
+      e.preventDefault();
+      var input = document.getElementById('admin-chat-input');
+      var user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) {
+        alert('You must be logged in as admin to chat!');
+        return;
+      }
+      var settings = JSON.parse(localStorage.getItem('groupChatSettings') || '{}');
+      if (settings.enableGroupChat === false) {
+        alert('Group chat is currently disabled by admin.');
+        return;
+      }
+      var messages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+      messages.push({ user: user.username, text: input.value, time: Date.now() });
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
+      input.value = '';
+      loadAdminChatMessages();
+    };
+    // Admin dashboard user management logic
+    function loadAdminUsers() {
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      var usersList = document.getElementById('admin-users-list');
+      if (!usersList) return;
+      usersList.innerHTML = '';
+      users.forEach(function(u) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + (u.fullname || '') + '</td>' +
+                       '<td>' + (u.username || '') + '</td>' +
+                       '<td>' + (u.email || '') + '</td>' +
+                       '<td>' + (u.lastLogin ? new Date(u.lastLogin).toLocaleString() : '-') + '</td>';
+        if (u.username !== 'codes') {
+          tr.innerHTML += '<td>' +
+            '<button class="btn" style="background:#fd7e14; color:white; padding:4px 10px; font-size:0.95em;" onclick="deleteUser(\'' + u.username + '\')">Delete</button>' +
+            '<button class="btn" style="background:#198754; color:white; padding:4px 10px; font-size:0.95em; margin-left:4px;" onclick="resetPassword(\'' + u.username + '\')">Reset Password</button>' +
+          '</td>';
+        } else {
+          tr.innerHTML += '<td>-</td>';
+        }
+        usersList.appendChild(tr);
+      });
+    }
+    // Dashboard stats logic
+    function updateAdminStats() {
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      var messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+      document.getElementById('admin-total-users').textContent = users.length;
+      document.getElementById('admin-total-messages').textContent = messages.length;
+      document.getElementById('admin-active-admins').textContent = users.filter(function(u){return u.role==='admin'||u.username==='codes';}).length;
+    }
+    // Recent activity logic
+    function loadAdminActivity() {
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      var activityList = document.getElementById('admin-activity-list');
+      var activities = [];
+      users.forEach(function(u){
+        if(u.activity&&Array.isArray(u.activity)){
+          activities = activities.concat(u.activity.map(function(act){
+            return (u.username||'')+': '+act;
+          }));
+        }
+      });
+      activities = activities.slice(-10).reverse();
+      activityList.innerHTML = activities.length ? activities.map(function(a){return '<div>'+a+'</div>';}).join('') : '<em>No recent activity.</em>';
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      updateAdminStats();
+      loadAdminActivity();
+    });
+    window.deleteUser = function(username) {
+      if (!confirm('Are you sure you want to delete user ' + username + '?')) return;
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      users = users.filter(function(u) { return u.username !== username; });
+      localStorage.setItem('users', JSON.stringify(users));
+      var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (currentUser && currentUser.username === username) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+        return;
+      }
+      loadAdminUsers();
+    };
+    window.resetPassword = function(username) {
+      var newPass = prompt('Enter new password for ' + username + ':');
+      if (!newPass) return;
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      var idx = users.findIndex(function(u) { return u.username === username; });
+      if (idx !== -1) {
+        users[idx].password = newPass;
+        if (!users[idx].activity) users[idx].activity = [];
+        users[idx].activity.push('Password reset by admin at ' + new Date().toLocaleString());
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Password reset for ' + username);
+      }
+      loadAdminUsers();
+    };
+    document.addEventListener('DOMContentLoaded', function() {
+      loadAdminChatMessages();
+      loadAdminUsers();
+    });
+  </script>
+</body>
+</html>

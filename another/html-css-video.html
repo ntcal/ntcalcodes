@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='stylesheet' href='assets/css/style.css'>
+  <title>HTML & CSS Basics Video</title>
+</head>
+<body>
+  <header>
+    <div style='display:flex; align-items:center; justify-content:space-between;'>
+      <img src='assets/images/logo.png' alt='NTcal Codes Logo' style='height:48px; margin-right:18px;'>
+      <h1 style='margin:0; font-size:2em;'>HTML &amp; CSS Basics</h1>
+      <nav class='main-nav' style='margin-left:auto;'>
+        <a href='dashboard.html'>Home</a>
+        <a href='courses.html'>Courses</a>
+        <a href='profile.html'>Profile</a>
+        <a href='contact.html'>Contact</a>
+        <a href='#' onclick='logout()'>Logout</a>
+      </nav>
+    </div>
+  </header>
+  <div class='container' style='text-align:center;'>
+    <h2>Watch the Video</h2>
+    <video id='courseVideo' controls style='max-width:100%; border-radius:12px; box-shadow:0 2px 16px rgba(0,0,0,0.10); margin-bottom:16px;'>
+      <source src='assets/videos/html-css.mp4' type='video/mp4'>
+      Sorry, your browser does not support embedded videos. <a href='assets/videos/html-css.mp4' download>Download the video</a> instead.
+    </video>
+    <div id='videoError' style='color:#fd7e14; font-weight:600; margin-top:12px; display:none;'>
+      Unable to load the video. Please check your internet connection or <a href='assets/videos/html-css.mp4' download style='color:#0d6efd;'>download the video here</a>.
+    </div>
+    <p style='margin-top:18px;'>Learn the basics of HTML &amp; CSS to start building your own websites!</p>
+  </div>
+</body>
+</html>

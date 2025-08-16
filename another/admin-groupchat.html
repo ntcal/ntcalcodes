@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='stylesheet' href='assets/css/style.css'>
+  <title>Admin - Group Chat Controls</title>
+</head>
+<body>
+  <div class='admin-sidebar'>
+    <h2>Admin Panel</h2>
+    <nav>
+      <a href='admin-dashboard.html'>Dashboard</a>
+      <a href='admin-users.html'>Users</a>
+      <a href='admin-groupchat.html'>Group Chat</a>
+      <a href='admin-activity.html'>Activity Logs</a>
+      <a href='admin-settings.html'>Settings</a>
+      <a href='dashboard.html'>Logout</a>
+    </nav>
+  </div>
+  <div class='admin-content'>
+    <h1>Group Chat Controls</h1>
+    <div class='groupchat-card' style='background:#fff3e0; border-radius:14px; box-shadow:0 2px 12px rgba(253,126,20,0.10); padding:28px; max-width:480px; margin:32px auto;'>
+      <h2 style='color:#fd7e14; text-align:center;'>Group Chat Permission</h2>
+      <div id='groupchat-toggle' style='text-align:center; margin:18px 0;'></div>
+      <p style='color:#6f42c1; text-align:center; margin-top:12px;'>Toggle whether only admins can send messages in the group chat. This setting applies instantly for all users.</p>
+    </div>
+    <div class='groupchat-settings-card' style='background:#e7f1ff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,0.07); padding:28px; max-width:480px; margin:32px auto;'>
+      <h2 style='color:#6f42c1; text-align:center;'>Group Chat Settings</h2>
+      <form id='groupchat-settings-form' style='display:flex; flex-direction:column; gap:18px;'>
+        <label style='display:flex; align-items:center; gap:10px;'>
+          <input type='checkbox' id='enableGroupChat'> Enable Group Chat
+        </label>
+        <label style='display:flex; align-items:center; gap:10px;'>
+          <input type='checkbox' id='allowFileUpload'> Allow File Uploads
+        </label>
+        <label style='display:flex; align-items:center; gap:10px;'>
+          <input type='checkbox' id='enableEmojiPicker'> Enable Emoji Picker
+        </label>
+        <button type='button' class='btn' id='saveGroupChatSettings' style='margin-top:10px;'>Save Settings</button>
+      </form>
+      <div id='groupchat-settings-status' style='margin-top:12px; color:#198754; text-align:center;'></div>
+    </div>
+    <div class='groupchat-logs' style='margin-top:40px;'>
+      <h3 style='color:#6f42c1;'>Recent Group Chat Actions</h3>
+      <div id='groupchat-logs' style='background:#f8f9fa; border-radius:10px; padding:18px; min-height:60px;'></div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!(user && (user.role === 'admin' || user.username === 'codes'))) {
+        alert('Access denied. Admins only.');
+        window.location.href = 'dashboard.html';
+        return;
+      }
+      var toggleDiv = document.getElementById('groupchat-toggle');
+      if (toggleDiv) {
+        if (localStorage.getItem('adminOnlyGroupChat') === null) {
+          localStorage.setItem('adminOnlyGroupChat', 'true');
+        }
+        function isAdminOnlyGroupChat() {
+          return localStorage.getItem('adminOnlyGroupChat') === 'true';
+        }
+        var checked = isAdminOnlyGroupChat() ? 'checked' : '';
+        toggleDiv.innerHTML = '<label style="color:#fd7e14; font-size:1.08em; display:flex; align-items:center; justify-content:center; gap:8px;">'
+          + '<input type="checkbox" id="adminOnlyGroupChatToggle" style="accent-color:#fd7e14;" ' + checked + '> Only admin can send in group chat'
+          + '</label>';
+        var toggle = document.getElementById('adminOnlyGroupChatToggle');
+        if (toggle) {
+          toggle.onchange = function() {
+            localStorage.setItem('adminOnlyGroupChat', this.checked ? 'true' : 'false');
+            // Log action
+            var logs = JSON.parse(localStorage.getItem('groupChatLogs') || '[]');
+            logs.push({
+              action: this.checked ? 'Enabled admin-only group chat' : 'Disabled admin-only group chat',
+              time: new Date().toLocaleString(),
+              by: user.username
+            });
+            localStorage.setItem('groupChatLogs', JSON.stringify(logs));
+            renderLogs();
+          };
+        }
+      }
+      function renderLogs() {
+        var logsDiv = document.getElementById('groupchat-logs');
+        var logs = JSON.parse(localStorage.getItem('groupChatLogs') || '[]');
+        if (!logs.length) {
+          logsDiv.innerHTML = '<em>No actions yet.</em>';
+        } else {
+          logsDiv.innerHTML = logs.slice(-10).reverse().map(function(log) {
+            return '<div style="margin-bottom:8px; color:#333; font-size:0.98em;">'
+              + '<strong>' + log.action + '</strong> by <span style="color:#fd7e14;">' + log.by + '</span> <span style="color:#888;">(' + log.time + ')</span>'
+              + '</div>';
+          }).join('');
+        }
+      }
+      function loadGroupChatSettings() {
+        var settings = JSON.parse(localStorage.getItem('groupChatSettings') || '{}');
+        document.getElementById('enableGroupChat').checked = settings.enableGroupChat !== false;
+        document.getElementById('allowFileUpload').checked = !!settings.allowFileUpload;
+        document.getElementById('enableEmojiPicker').checked = !!settings.enableEmojiPicker;
+      }
+      function saveGroupChatSettings() {
+        var settings = {
+          enableGroupChat: document.getElementById('enableGroupChat').checked,
+          allowFileUpload: document.getElementById('allowFileUpload').checked,
+          enableEmojiPicker: document.getElementById('enableEmojiPicker').checked
+        };
+        localStorage.setItem('groupChatSettings', JSON.stringify(settings));
+        document.getElementById('groupchat-settings-status').textContent = 'Settings saved!';
+        setTimeout(function() {
+          document.getElementById('groupchat-settings-status').textContent = '';
+        }, 2000);
+      }
+      document.getElementById('saveGroupChatSettings').onclick = saveGroupChatSettings;
+      loadGroupChatSettings();
+      renderLogs();
+    });
+  </script>
+</body>
+</html>

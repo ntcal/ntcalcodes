@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <link rel='stylesheet' href='assets/css/style.css'>
+        <style>
+        body { background:linear-gradient(120deg, #fd7e14 60%, #fff3e0 100%); }
+        .login-container { max-width:400px; margin:40px auto; background:white; padding:32px 24px; border-radius:14px; box-shadow:0 2px 16px rgba(253,126,20,0.12); }
+        .login-container h2 { color:#fd7e14; text-align:center; margin-bottom:18px; }
+        .login-container input, .login-container button { width:100%; padding:12px; margin:8px 0; border-radius:6px; border:1px solid #fd7e14; font-size:1em; }
+        .login-container button { background:linear-gradient(90deg, #fd7e14 60%, #fff3e0 100%); color:#fff; font-weight:700; border:none; cursor:pointer; transition:background 0.2s, transform 0.2s; }
+        .login-container button:hover { background:linear-gradient(90deg, #fff3e0 60%, #fd7e14 100%); color:#fd7e14; transform:scale(1.04); }
+        @media (max-width:600px) {
+          .login-container { padding:16px 8px; }
+          .login-container h2 { font-size:1.3em; }
+          .login-container input, .login-container button { font-size:0.95em; }
+        }
+        </style>
+<title>NTcal Codes - Login</title>
+</head>
+<body>
+<header><h1>NTcal Codes</h1></header>
+<div class='login-container'>
+<h2>Login</h2>
+<form onsubmit='login(event)'>
+            <input type='text' id='username' placeholder='Username' required>
+            <div style='position:relative;'>
+              <input type='password' id='password' placeholder='Password' required>
+            </div>
+            <div style='margin-bottom:8px;'>
+              <label style='font-size:0.98em; color:#fd7e14; display:flex; align-items:center; gap:6px;'>
+                <input type='checkbox' id='showPassword' style='accent-color:#fd7e14;'> View Password
+              </label>
+            </div>
+            <button type='submit'>Login</button>
+        </form>
+        <p style='text-align:center; margin-top:12px;'>Don't have an account? <a href='index.html' style='color:#fd7e14; font-weight:600;'>Signup here</a></p>
+    </div>
+<script src='assets/js/script.js'></script>
+<script>
+  var showPwd = document.getElementById('showPassword');
+  var pwdInput = document.getElementById('password');
+  if (showPwd && pwdInput) {
+    showPwd.addEventListener('change', function() {
+      pwdInput.type = this.checked ? 'text' : 'password';
+    });
+  }
+</script>
+</body>
+</html>

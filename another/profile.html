@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='stylesheet' href='assets/css/style.css'>
+  <title>Profile | NTcal Codes</title>
+</head>
+<body>
+  <header>
+    <div style='display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;'>
+      <img src='assets/images/logo.png' alt='NTcal Codes Logo' style='height:48px; margin-right:18px;'>
+      <h1 style='margin:0; font-size:2em; color:#fd7e14;'>Your Profile</h1>
+      <nav class='main-nav' style='margin-left:auto;'>
+        <a href='dashboard.html'>Home</a>
+        <a href='courses.html'>Courses</a>
+        <a href='profile.html'>Profile</a>
+        <a href='contact.html'>Contact</a>
+        <a href='chat.html'>Chat</a>
+        <a href='#' onclick='logout()'>Logout</a>
+      </nav>
+    </div>
+  </header>
+  <div class='container'>
+    <div class='profile-card' style='max-width:700px; margin:40px auto; background:#fff; border-radius:12px; box-shadow:0 2px 16px rgba(0,0,0,0.08); padding:32px;'>
+      <h2 style='text-align:center; color:#fd7e14;'>Profile Details</h2>
+      <div style='margin-bottom:24px;'>
+        <p><strong>Name:</strong> <span id='profile-name'></span></p>
+        <p><strong>Username:</strong> <span id='profile-username'></span></p>
+        <p><strong>Email:</strong> <span id='profile-email'></span></p>
+        <p><strong>Enrolled Courses:</strong> <span id='profile-courses'></span></p>
+        <button class='btn' style='background:#fd7e14; color:#fff; margin-top:10px;' onclick='editProfile()'>Edit Profile</button>
+      </div>
+      <div id='edit-profile-form' style='display:none; margin-top:24px; background:#f8f9fa; border-radius:8px; padding:20px;'>
+        <h3 style='color:#6f42c1;'>Edit Profile</h3>
+        <form onsubmit='saveProfile(event)'>
+          <input type='text' id='edit-fullname' placeholder='Full Name' style='margin-bottom:10px; width:100%; padding:10px 14px; border-radius:7px; border:1.5px solid #e7f1ff; font-size:1.08em; transition:border-color 0.2s;'>
+          <input type='email' id='edit-email' placeholder='Email' style='margin-bottom:10px; width:100%; padding:10px 14px; border-radius:7px; border:1.5px solid #e7f1ff; font-size:1.08em; transition:border-color 0.2s;'>
+          <style>
+            #edit-profile-form input:focus {
+              outline: none;
+              border-color: #fd7e14;
+              box-shadow: 0 0 0 2px #fd7e1433;
+            }
+          </style>
+          <div style='display:flex; gap:10px;'>
+            <button type='submit' class='btn' style='background:#fd7e14; color:#fff;'>Save Changes</button>
+            <button type='button' class='btn' onclick='cancelEdit()' style='background:#6f42c1; color:#fff;'>Cancel</button>
+          </div>
+        </form>
+      </div>
+      <!-- Admin section: List all registered users -->
+      <div id='all-users-section' style='display:none; margin-top:40px;'>
+        <h2 style='color:#6f42c1; text-align:center;'>All Registered Users</h2>
+        <div id='user-count' style='margin-bottom:12px; font-weight:600; color:#fd7e14;'></div>
+        <table style='width:100%; border-collapse:collapse; background:#f8f9fa; border-radius:8px;'>
+          <thead>
+            <tr style='background:#e7f1ff;'>
+              <th style='padding:8px; border:1px solid #ccc;'>Name</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Username</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Email</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Last Login</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Activities</th>
+              <th style='padding:8px; border:1px solid #ccc;'>Actions</th>
+            </tr>
+          </thead>
+          <tbody id='users-list'></tbody>
+        </table>
+      </div>
+    </div>
+<script>
+  // Load user profile from localStorage
+  document.addEventListener('DOMContentLoaded', function() {
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user) {
+      document.getElementById('profile-name').textContent = user.fullname || '';
+      document.getElementById('profile-username').textContent = user.username || '';
+      document.getElementById('profile-email').textContent = user.email || 'Not set';
+      var courses = user.courses || ['HTML & CSS Basics', 'JavaScript Essentials'];
+      document.getElementById('profile-courses').textContent = Array.isArray(courses) ? courses.join(', ') : courses;
+      document.getElementById('edit-fullname').value = user.fullname || '';
+      document.getElementById('edit-email').value = user.email || '';
+      // Only show all users section to admin
+      if (user.role === 'admin' || user.username === 'ntcal') {
+        document.getElementById('all-users-section').style.display = 'block';
+        var users = JSON.parse(localStorage.getItem('users')) || [];
+        var usersList = document.getElementById('users-list');
+        var userCount = document.getElementById('user-count');
+        usersList.innerHTML = '';
+        userCount.textContent = 'Total Users: ' + users.length;
+        users.forEach(function(u, idx) {
+          var tr = document.createElement('tr');
+          var activities = [];
+          if (u.activity && Array.isArray(u.activity)) {
+            activities = u.activity;
+          }
+          tr.innerHTML = '<td style="padding:8px; border:1px solid #ccc;">' + (u.fullname || '') + '</td>' +
+                        '<td style="padding:8px; border:1px solid #ccc;">' + (u.username || '') + '</td>' +
+                        '<td style="padding:8px; border:1px solid #ccc;">' + (u.email || '') + '</td>' +
+                        '<td style="padding:8px; border:1px solid #ccc;">' + (u.lastLogin ? new Date(u.lastLogin).toLocaleString() : '-') + '</td>' +
+                        '<td style="padding:8px; border:1px solid #ccc; font-size:0.95em; color:#555;">' + (activities.length ? activities.join('<br>') : '-') + '</td>';
+          // Admin can delete users except self and reset password
+          if ((user.role === 'admin' || user.username === 'ntcal') && u.username !== user.username) {
+            tr.innerHTML += '<td style="padding:8px; border:1px solid #ccc;">' +
+              '<button class="btn" style="background:#fd7e14; color:white; padding:4px 10px; font-size:0.95em;" onclick="deleteUser(\'' + u.username + '\')">Delete</button>' +
+              '<button class="btn" style="background:#198754; color:white; padding:4px 10px; font-size:0.95em; margin-left:4px;" onclick="resetPassword(\'' + u.username + '\')">Reset Password</button>' +
+            '</td>';
+          } else {
+            tr.innerHTML += '<td style="padding:8px; border:1px solid #ccc;">-</td>';
+          }
+          usersList.appendChild(tr);
+        });
+      } else {
+        document.getElementById('all-users-section').style.display = 'none';
+      }
+  // Track last login for users
+  (function trackLogin() {
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user) {
+      var users = JSON.parse(localStorage.getItem('users')) || [];
+      var idx = users.findIndex(function(u) { return u.username === user.username; });
+      if (idx !== -1) {
+        users[idx].lastLogin = Date.now();
+        if (!users[idx].activity) users[idx].activity = [];
+        users[idx].activity.push('Logged in at ' + new Date().toLocaleString());
+        localStorage.setItem('users', JSON.stringify(users));
+      }
+    }
+  })();
+
+  // Track profile edits
+  function saveProfile(event) {
+    event.preventDefault();
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    user.fullname = document.getElementById('edit-fullname').value;
+    user.email = document.getElementById('edit-email').value;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    document.getElementById('profile-name').textContent = user.fullname;
+    document.getElementById('profile-email').textContent = user.email;
+    document.getElementById('edit-profile-form').style.display = 'none';
+    // Track activity
+    var users = JSON.parse(localStorage.getItem('users')) || [];
+    var idx = users.findIndex(function(u) { return u.username === user.username; });
+    if (idx !== -1) {
+      if (!users[idx].activity) users[idx].activity = [];
+      users[idx].activity.push('Profile edited at ' + new Date().toLocaleString());
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+    alert('Profile updated!');
+  }
+  // Track course enrollments (example: call this when user enrolls in a course)
+  function trackCourseEnrollment(courseName) {
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    var users = JSON.parse(localStorage.getItem('users')) || [];
+    var idx = users.findIndex(function(u) { return u.username === user.username; });
+    if (idx !== -1) {
+      if (!users[idx].activity) users[idx].activity = [];
+      users[idx].activity.push('Enrolled in ' + courseName + ' at ' + new Date().toLocaleString());
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+  }
+
+  // Admin reset password function
+  function resetPassword(username) {
+    var newPass = prompt('Enter new password for ' + username + ':');
+    if (!newPass) return;
+    var users = JSON.parse(localStorage.getItem('users')) || [];
+    var idx = users.findIndex(function(u) { return u.username === username; });
+    if (idx !== -1) {
+      users[idx].password = newPass;
+      localStorage.setItem('users', JSON.stringify(users));
+      alert('Password reset for ' + username);
+    }
+  }
+    }
+  });
+
+  // Admin delete user function
+  function deleteUser(username) {
+    if (!confirm('Are you sure you want to delete user ' + username + '?')) return;
+    var users = JSON.parse(localStorage.getItem('users')) || [];
+    users = users.filter(function(u) { return u.username !== username; });
+    localStorage.setItem('users', JSON.stringify(users));
+    // If deleted user is currently logged in, log them out
+    var currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser && currentUser.username === username) {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'login.html';
+      return;
+    }
+    // Refresh user list
+    location.reload();
+  }
+
+  function editProfile() {
+    document.getElementById('edit-profile-form').style.display = 'block';
+  }
+  function cancelEdit() {
+    document.getElementById('edit-profile-form').style.display = 'none';
+  }
+  function saveProfile(event) {
+    event.preventDefault();
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    user.fullname = document.getElementById('edit-fullname').value;
+    user.email = document.getElementById('edit-email').value;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    document.getElementById('profile-name').textContent = user.fullname;
+    document.getElementById('profile-email').textContent = user.email;
+    document.getElementById('edit-profile-form').style.display = 'none';
+    alert('Profile updated!');
+  }
+</script>
+  </div>
+</body>
+</html>

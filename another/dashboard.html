@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='stylesheet' href='assets/css/style.css'>
+  <title>Dashboard | NTcal Codes</title>
+</head>
+<body>
+  <header>
+    <div style='display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;'>
+      <img src='assets/images/logo.png' alt='NTcal Codes Logo' style='height:48px; margin-right:18px;'>
+      <h1 style='margin:0; font-size:2em;'>Dashboard</h1>
+      <nav class='main-nav' style='margin-left:auto;'>
+        <a href='dashboard.html'>Home</a>
+        <a href='courses.html'>Courses</a>
+        <a href='profile.html'>Profile</a>
+        <a href='contact.html'>Contact</a>
+        <a href='chat.html'>Chat</a>
+        <a href='#' onclick='logout()'>Logout</a>
+      </nav>
+    </div>
+  </header>
+<div class='container'>
+<section class='hero'>
+  <img src='assets/images/logo.png' alt='NTcal Codes Logo' class='logo'>
+  <h1 id='welcome-message'>Welcome to NTcal Codes</h1>
+  <p class='subtitle' id='user-greeting'></p>
+  <button class='btn hero-btn' onclick="window.location.href='courses.html'">Explore Courses</button>
+</section>
+<section class='learning-section'>
+  <h3>Featured Courses</h3>
+  <div class='courses-grid'>
+    <div class='course-card'>
+      <h3>HTML & CSS Basics</h3>
+      <p>Start building beautiful websites from scratch.</p>
+      <a href='courses.html' class='btn'>Learn More</a>
+    </div>
+    <div class='course-card'>
+      <h3>JavaScript Essentials</h3>
+      <p>Make your sites interactive and dynamic.</p>
+      <a href='courses.html' class='btn'>Learn More</a>
+    </div>
+    <div class='course-card'>
+      <h3>Responsive Design</h3>
+      <p>Learn to create mobile-friendly layouts.</p>
+      <a href='courses.html' class='btn'>Learn More</a>
+    </div>
+  </div>
+</section>
+<section class='tips-section'>
+  <h2>Learning Tips</h2>
+  <div class='tips-grid'>
+    <div class='tip-card'>
+      <h4>Practice Daily</h4>
+      <p>Consistent coding builds strong skills.</p>
+    </div>
+    <div class='tip-card'>
+      <h4>Engage Community</h4>
+      <p>Ask questions and share knowledge in our forum.</p>
+    </div>
+    <div class='tip-card'>
+      <h4>Build Projects</h4>
+      <p>Apply your learning to real-world challenges.</p>
+    </div>
+  </div>
+</section>
+<section class='cta-section'>
+  <h2>Ready to Start Learning?</h2>
+  <button class='btn cta-btn' onclick="window.location.href='login.html'">Join Now</button>
+</section>
+
+<section class='progress-section' style='margin:40px 0;'>
+  <h2 style='color:#0d6efd; text-align:center;'>Your Learning Progress</h2>
+  <div style='display:flex; justify-content:center; gap:32px; flex-wrap:wrap; margin-top:18px;'>
+    <div style='background:#e7f1ff; border-radius:10px; padding:18px 28px; min-width:180px; text-align:center;'>
+      <h4 style='color:#6f42c1;'>Courses Completed</h4>
+      <p style='font-size:2em; color:#fd7e14;'>2</p>
+    </div>
+    <div style='background:#f8f9fa; border-radius:10px; padding:18px 28px; min-width:180px; text-align:center;'>
+      <h4 style='color:#198754;'>Active Courses</h4>
+      <p style='font-size:2em; color:#0d6efd;'>1</p>
+    </div>
+    <div style='background:#fff3e0; border-radius:10px; padding:18px 28px; min-width:180px; text-align:center;'>
+      <h4 style='color:#fd7e14;'>Badges Earned</h4>
+      <p style='font-size:2em; color:#6f42c1;'>3</p>
+    </div>
+  </div>
+</section>
+
+<section class='quick-links-section' style='margin:40px 0;'>
+  <h2 style='color:#6f42c1; text-align:center;'>Quick Links</h2>
+  <div style='display:flex; justify-content:center; gap:24px; flex-wrap:wrap; margin-top:18px;'>
+    <a href='courses.html' class='btn' style='background:#fd7e14;'>All Courses</a>
+    <a href='profile.html' class='btn' style='background:#0d6efd;'>Your Profile</a>
+    <a href='contact.html' class='btn' style='background:#198754;'>Contact Support</a>
+    <a href='#' class='btn' style='background:#6f42c1;'>Community Forum</a>
+  </div>
+</section>
+
+<section class='testimonials-section' style='margin:40px 0;'>
+  <h2 style='color:#fd7e14; text-align:center;'>What Our Learners Say</h2>
+  <div style='display:flex; justify-content:center; gap:24px; flex-wrap:wrap; margin-top:18px;'>
+    <div style='background:#e7f1ff; border-radius:10px; padding:18px; max-width:300px;'>
+      <p>"NTcal Codes made web development easy and fun! The dashboard keeps me motivated."</p>
+      <div style='color:#fd7e14; font-size:1.3em; margin-bottom:6px;'>★★★★★</div>
+      <p style='font-weight:600; color:#6f42c1;'>- Ada, Student</p>
+    </div>
+    <div style='background:#f8f9fa; border-radius:10px; padding:18px; max-width:300px;'>
+      <p>"The AI assistant is super helpful for quick coding questions!"</p>
+      <div style='color:#fd7e14; font-size:1.3em; margin-bottom:6px;'>★★★★★</div>
+      <p style='font-weight:600; color:#fd7e14;'>- John, Learner</p>
+    </div>
+    <div style='background:#fff3e0; border-radius:10px; padding:18px; max-width:300px;'>
+      <p>"I love the responsive design and easy navigation."</p>
+      <div style='color:#fd7e14; font-size:1.3em; margin-bottom:6px;'>★★★★★</div>
+      <p style='font-weight:600; color:#198754;'>- Mary, Beginner</p>
+    </div>
+  </div>
+</section>
+
+<section class='resources-section' style='margin:40px 0;'>
+  <h2 style='color:#198754; text-align:center;'>Learning Resources</h2>
+  <ul style='max-width:600px; margin:0 auto; padding-left:20px;'>
+    <li><a href='https://developer.mozilla.org/' target='_blank' style='color:#0d6efd;'>MDN Web Docs</a> - Comprehensive web development documentation.</li>
+    <li><a href='https://www.freecodecamp.org/' target='_blank' style='color:#fd7e14;'>freeCodeCamp</a> - Free coding tutorials and projects.</li>
+    <li><a href='https://css-tricks.com/' target='_blank' style='color:#6f42c1;'>CSS-Tricks</a> - Tips and guides for modern CSS.</li>
+    <li><a href='https://stackoverflow.com/' target='_blank' style='color:#198754;'>Stack Overflow</a> - Ask questions and get answers from the coding community.</li>
+  </ul>
+</section>
+</div>
+<hr style='margin:32px 0;'>
+<section class='ntcal-ai' style='max-width:600px; margin:40px auto; background:white; padding:24px 18px; border-radius:14px; box-shadow:0 2px 16px rgba(111,66,193,0.10);'>
+  <h3 style='color:#6f42c1; text-align:center;'>NTcal AI Assistant</h3>
+  <p style='text-align:center;'>Need help with your code? Ask NTcal AI for instant coding tips and solutions!</p>
+  <form onsubmit='ntcalAI(event)'>
+    <input type='text' id='ai-question' placeholder='Ask NTcal AI anything about coding...' required style='width:100%; padding:12px; margin:8px 0; border-radius:6px; border:1px solid #6f42c1;'>
+    <button type='submit' style='background:linear-gradient(90deg, #6f42c1 60%, #0d6efd 100%); color:#fff; font-weight:700; border:none; border-radius:6px; padding:10px 22px; margin-top:8px;'>Ask NTcal AI</button>
+  </form>
+  <div id='ai-answer' style='margin-top:16px; color:#198754; text-align:center;'></div>
+</section>
+
+<section class='admin-groupchat-section' style='margin:40px 0;'>
+  <h2 style='color:#fd7e14; text-align:center;'>Group Chat Settings</h2>
+  <div id='admin-groupchat-toggle' style='text-align:center; margin-top:18px;'></div>
+</section>
+</div>
+<script src='assets/js/script.js'></script>
+<script>
+  // Show personalized welcome message using signed up username
+  document.addEventListener('DOMContentLoaded', function() {
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user && user.username) {
+      document.getElementById('welcome-message').textContent = 'Welcome, ' + user.username + '!';
+      document.getElementById('user-greeting').textContent = 'Glad to have you back. Continue your learning journey below!';
+    }
+    // Admin group chat toggle
+    if (user && user.role === 'admin') {
+      var toggleDiv = document.getElementById('admin-groupchat-toggle');
+      if (toggleDiv) {
+        if (localStorage.getItem('adminOnlyGroupChat') === null) {
+          localStorage.setItem('adminOnlyGroupChat', 'true');
+        }
+        function isAdminOnlyGroupChat() {
+          return localStorage.getItem('adminOnlyGroupChat') === 'true';
+        }
+        var checked = isAdminOnlyGroupChat() ? 'checked' : '';
+        toggleDiv.innerHTML = '<label style="color:#fd7e14; font-size:1.08em; display:flex; align-items:center; justify-content:center; gap:8px;">'
+          + '<input type="checkbox" id="adminOnlyGroupChatToggleDash" style="accent-color:#fd7e14;" ' + checked + '> Only admin can send in group chat'
+          + '</label>';
+        var toggle = document.getElementById('adminOnlyGroupChatToggleDash');
+        if (toggle) {
+          toggle.onchange = function() {
+            localStorage.setItem('adminOnlyGroupChat', this.checked ? 'true' : 'false');
+          };
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>

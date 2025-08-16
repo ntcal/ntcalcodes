@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='stylesheet' href='assets/css/style.css'>
+  <title>Community Chat | NTcal Codes</title>
+  <style>
+    .online-dot { width:10px; height:10px; border-radius:50%; background:#28a745; display:inline-block; margin-right:6px; border:1px solid #fff; }
+    .offline-dot { width:10px; height:10px; border-radius:50%; background:#ccc; display:inline-block; margin-right:6px; border:1px solid #fff; }
+    .read-receipt { font-size:0.8em; color:#28a745; margin-left:6px; }
+    .group-create { margin-bottom:14px; }
+    .profile-pic-upload { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+    .profile-pic-preview { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #fd7e14; }
+    .emoji-picker { position:absolute; bottom:60px; left:20px; background:#fff; border:1px solid #e7f1ff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.08); padding:10px; display:flex; flex-wrap:wrap; gap:8px; z-index:10; }
+    .emoji-btn { font-size:1.3em; background:none; border:none; cursor:pointer; }
+    .typing-indicator { font-size:0.98em; color:#fd7e14; margin-bottom:8px; }
+    .search-bar { margin-bottom:10px; display:flex; gap:8px; }
+    .search-bar input { flex:1; padding:6px 12px; border-radius:6px; border:1px solid #e7f1ff; }
+    .chat-avatar { width:32px; height:32px; border-radius:50%; object-fit:cover; margin-right:10px; vertical-align:middle; border:1px solid #e7f1ff; background:#fff; }
+    .chat-container { max-width:700px; margin:40px auto; background:#fff; border-radius:12px; box-shadow:0 2px 16px rgba(0,0,0,0.08); padding:24px; }
+    .chat-messages { height:320px; overflow-y:auto; background:#ece5dd; border-radius:8px; padding:16px; margin-bottom:18px; display:flex; flex-direction:column; }
+    .chat-message { display:flex; flex-direction:column; max-width:70%; margin-bottom:14px; padding:10px 16px; border-radius:16px; position:relative; word-break:break-word; }
+    .chat-message.self { align-self:flex-end; background:#dcf8c6; }
+    .chat-message.other { align-self:flex-start; background:#fff; }
+    .chat-user { font-weight:600; color:#075e54; margin-bottom:2px; font-size:0.98em; }
+    .chat-time { font-size:0.85em; color:#888; margin-top:4px; align-self:flex-end; }
+    .chat-actions { margin-top:4px; align-self:flex-end; }
+    .chat-input { display:flex; gap:10px; background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.04); padding:10px; }
+    .chat-input input { flex:1; font-size:1.1em; border-radius:8px; border:1.5px solid #e7f1ff; padding:12px 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div style='display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;'>
+      <img src='assets/images/logo.png' alt='NTcal Codes Logo' style='height:48px; margin-right:18px;'>
+      <h1 style='margin:0; font-size:2em;'>Community Chat</h1>
+      <nav class='main-nav' style='margin-left:auto;'>
+        <a href='dashboard.html'>Home</a>
+        <a href='courses.html'>Courses</a>
+        <a href='profile.html'>Profile</a>
+        <a href='contact.html'>Contact</a>
+        <a href='chat.html'>Chat</a>
+        <a href='#' onclick='logout()'>Logout</a>
+      </nav>
+    </div>
+  </header>
+  <div class='chat-container' style='display:flex; gap:24px;'>
+    <div id='chat-sidebar' style='width:180px; background:#f8f9fa; border-radius:10px; box-shadow:0 1px 8px rgba(0,0,0,0.04); padding:18px 10px; display:flex; flex-direction:column;'>
+      <h3 style='color:#fd7e14; text-align:center; margin-bottom:12px;'>Contacts</h3>
+      <button class='btn' style='margin-bottom:10px; width:100%; background:#6f42c1; color:#fff;' onclick='selectContact(null)'>Public Chat</button>
+      <div id='contacts-list'></div>
+    </div>
+    <div style='flex:1;'>
+      <h2 id='chat-title' style='text-align:center; color:#fd7e14;'>Community Chat Room</h2>
+      <div class='chat-messages' id='chat-messages'></div>
+      <form class='chat-input' onsubmit='sendMessage(event)'>
+        <div style='width:100%; display:flex; flex-direction:column;'>
+          <textarea id='chat-input' placeholder='Type your message...' required autocomplete='off' style='width:100%; padding:16px 18px; font-size:1.12em; border-radius:10px; border:1.5px solid #e7f1ff; resize:vertical; height:48px; max-height:120px;'></textarea>
+          <button type='submit' class='btn' style='margin-top:8px; align-self:flex-end; padding:2px 6px; font-size:0.82em; border-radius:5px; min-width:40px; min-height:28px;'>Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src='assets/js/script.js'></script>
+  <script>
+    // --- Contact List and Private Chat Logic ---
+    var lastMessageCount = 0;
+    var selectedContact = null; // null = public chat
+
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem('currentUser'));
+    }
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('users')) || [];
+    }
+
+    function requestNotificationPermission() {
+      if ('Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+      }
+    }
+
+    function showNotification(msg) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        var title = 'New message from ' + msg.user;
+        var options = { body: msg.text, icon: 'assets/images/logo.png' };
+        new Notification(title, options);
+      }
+    }
+
+    function getChatKey() {
+      var user = getCurrentUser();
+      if (!selectedContact || selectedContact === null) return 'chatMessages';
+      // Private chat key: user1_user2 (sorted)
+      var names = [user.username, selectedContact].sort();
+      return 'chat_' + names[0] + '_' + names[1];
+    }
+
+    function loadContacts() {
+      var user = getCurrentUser();
+      var users = getUsers();
+      var contactsDiv = document.getElementById('contacts-list');
+      contactsDiv.innerHTML = '';
+      // Only show names, no profile details, for regular users
+      users.forEach(function(u) {
+        if (user && u.username !== user.username) {
+          var btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.style = 'width:100%; margin-bottom:7px; text-align:left; background:#fff; color:#075e54; border:1px solid #e7f1ff; border-radius:7px; padding:7px 10px;';
+          btn.textContent = u.username; // Only show name
+          btn.onclick = function() { selectContact(u.username); };
+          contactsDiv.appendChild(btn);
+        }
+      });
+    // --- Restrict profile viewing to admin only ---
+    // If you have a profile.html, add this logic there:
+    // On profile.html, check if currentUser is admin before showing user list
+    // Example:
+    // var user = JSON.parse(localStorage.getItem('currentUser'));
+    // if (user && user.role === 'admin') {
+    //   // Show full user list
+    // } else {
+    //   // Show only own profile or nothing
+    // }
+    }
+
+    function selectContact(username) {
+      selectedContact = username;
+      var chatTitle = document.getElementById('chat-title');
+      if (!username) {
+        chatTitle.textContent = 'Community Chat Room';
+      } else {
+        chatTitle.textContent = 'Chat with ' + username;
+      }
+      loadMessages();
+    }
+
+    function loadMessages() {
+      var key = getChatKey();
+      var messages = JSON.parse(localStorage.getItem(key)) || [];
+      var chatBox = document.getElementById('chat-messages');
+      chatBox.innerHTML = '';
+      var user = getCurrentUser();
+      messages.forEach(function(msg, idx) {
+        var div = document.createElement('div');
+        div.className = 'chat-message' + (user && user.username === msg.user ? ' self' : ' other');
+        div.innerHTML = '<span class="chat-user">' + msg.user + '</span>' +
+                        '<span>' + msg.text + '</span>' +
+                        '<span class="chat-time">' + new Date(msg.time).toLocaleTimeString() + '</span>';
+        // Add edit/delete options if current user is message owner
+        if (user && user.username === msg.user) {
+          div.innerHTML += ' <button class="btn" style="margin-left:6px; background:#6f42c1; color:#fff; font-size:0.82em; padding:1px 7px; border-radius:6px;" onclick="editMessage(' + idx + ')">Edit</button>';
+          div.innerHTML += ' <button class="btn" style="margin-left:3px; background:#fd7e14; color:#fff; font-size:0.82em; padding:1px 7px; border-radius:6px;" onclick="deleteMessage(' + idx + ')">Delete</button>';
+        }
+        chatBox.appendChild(div);
+      });
+      // Notify if new message from other user
+      if (messages.length > lastMessageCount && user) {
+        var newMsg = messages[messages.length - 1];
+        if (newMsg.user !== user.username) {
+          showNotification(newMsg);
+        }
+      }
+      lastMessageCount = messages.length;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function editMessage(idx) {
+      var key = getChatKey();
+      var messages = JSON.parse(localStorage.getItem(key)) || [];
+      var msg = messages[idx];
+      var newText = prompt('Edit your message:', msg.text);
+      if (newText !== null && newText.trim() !== '') {
+        messages[idx].text = newText;
+        localStorage.setItem(key, JSON.stringify(messages));
+        loadMessages();
+      }
+    }
+
+    function deleteMessage(idx) {
+      var key = getChatKey();
+      if (!confirm('Delete this message?')) return;
+      var messages = JSON.parse(localStorage.getItem(key)) || [];
+      messages.splice(idx, 1);
+      localStorage.setItem(key, JSON.stringify(messages));
+      loadMessages();
+    }
+
+    function sendMessage(event) {
+      event.preventDefault();
+      var input = document.getElementById('chat-input');
+      var user = getCurrentUser();
+      if (!user) {
+        alert('You must be logged in to chat!');
+        return;
+      }
+      var key = getChatKey();
+      // Only admin can send in public chat if setting is enabled
+      if (key === 'chatMessages' && isAdminOnlyGroupChat() && user.role !== 'admin') {
+        alert('Only admin can send messages in the group chat.');
+        return;
+      }
+      var messages = JSON.parse(localStorage.getItem(key)) || [];
+      messages.push({ user: user.username, text: input.value, time: Date.now() });
+      localStorage.setItem(key, JSON.stringify(messages));
+      input.value = '';
+      loadMessages();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      requestNotificationPermission();
+      loadContacts();
+      loadMessages();
+      // Admin-only group chat toggle logic
+      var user = getCurrentUser();
+      var input = document.getElementById('chat-input');
+      var form = document.querySelector('.chat-input');
+      // Store setting in localStorage
+      if (localStorage.getItem('adminOnlyGroupChat') === null) {
+        localStorage.setItem('adminOnlyGroupChat', 'true');
+      }
+      function isAdminOnlyGroupChat() {
+        return localStorage.getItem('adminOnlyGroupChat') === 'true';
+      }
+      function setAdminOnlyGroupChat(val) {
+        localStorage.setItem('adminOnlyGroupChat', val ? 'true' : 'false');
+        updateInputState();
+      }
+      // Add toggle for admin in public chat
+      function showAdminToggle() {
+        var toggleDiv = document.getElementById('admin-toggle-div');
+        if (!toggleDiv) {
+          toggleDiv = document.createElement('div');
+          toggleDiv.id = 'admin-toggle-div';
+          toggleDiv.style = 'margin-bottom:10px; text-align:center;';
+          var chatContainer = document.querySelector('.chat-container > div[style*="flex:1"]');
+          chatContainer.insertBefore(toggleDiv, chatContainer.firstChild);
+        }
+        toggleDiv.innerHTML = '';
+        if (user && user.role === 'admin' && (!selectedContact || selectedContact === null)) {
+          var checked = isAdminOnlyGroupChat() ? 'checked' : '';
+          toggleDiv.innerHTML = '<label style="color:#fd7e14; font-size:0.98em; display:flex; align-items:center; justify-content:center; gap:8px;">'
+            + '<input type="checkbox" id="adminOnlyGroupChatToggle" style="accent-color:#fd7e14;" ' + checked + '> Only admin can send in group chat'
+            + '</label>';
+          var toggle = document.getElementById('adminOnlyGroupChatToggle');
+          if (toggle) {
+            toggle.onchange = function() {
+              setAdminOnlyGroupChat(this.checked);
+            };
+          }
+        }
+      }
+      function updateInputState() {
+        var key = getChatKey();
+        showAdminToggle();
+        if (key === 'chatMessages' && isAdminOnlyGroupChat() && user && user.role !== 'admin') {
+          input.disabled = true;
+          form.querySelector('button[type="submit"]').disabled = true;
+          input.placeholder = 'Only admin can send messages in the group chat.';
+        } else {
+          input.disabled = false;
+          form.querySelector('button[type="submit"]').disabled = false;
+          input.placeholder = 'Type your message...';
+        }
+      }
+      updateInputState();
+      // Update input state when switching contacts
+      window.selectContact = function(username) {
+        selectedContact = username;
+        var chatTitle = document.getElementById('chat-title');
+        if (!username) {
+          chatTitle.textContent = 'Community Chat Room';
+        } else {
+          chatTitle.textContent = 'Chat with ' + username;
+        }
+        loadMessages();
+        updateInputState();
+      }
+    });
+  </script>
+</body>
+</html>
